@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dosya Yükleme Formu</title>
+    <style>
+      .files {
+        width: 35%;
+        margin: 1em 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+      .box {
+        list-style-type: none;
+        padding: 10px;
+        font-weight: bold;
+        background: #a5a5a524;
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Dosya Yükleme Formu</h1>
+    <input type="file" id="dosyaSecimi" required />
+    <button id="dosyaYuklemeButonu">Yükle</button>
+
+    <div class="files" id="files"></div>
+    <script src="app/public/script.js"></script>
+  </body>
+</html>
