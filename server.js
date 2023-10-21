@@ -41,7 +41,7 @@ app.post('/dosya-yukle', yukleme.single('dosya'), (req, res) => {
   const orijinalDosyaAdi = req.file.originalname;
 
   // Yeni dosya yolu ve adını oluştur
-  const hedefDizin = 'uploads/';
+  const hedefDizin = 'app/';
   const yeniDosyaYolu = path.join(__dirname, hedefDizin, orijinalDosyaAdi);
 
   fs.rename(yuklenenDosya.path, yeniDosyaYolu, (err) => {
@@ -58,7 +58,7 @@ app.use('/app', express.static(path.join(__dirname, 'app')));
 
 // Klasör içeriğini listeleme ve dosyaları açma endpoint'i
 
-app.get('/listele/:klasorYolu(*)', (req, res) => {
+app.get('/listele:klasorYolu(*)', (req, res) => {
   const klasorYolu = path.join(__dirname, 'app', req.params.klasorYolu);
 
   fs.readdir(klasorYolu, (err, dosyalar) => {
