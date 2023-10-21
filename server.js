@@ -11,7 +11,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/uploadsFileList', (req, res) => {
-  fs.readdir(path.join(__dirname, './uploads'), (err, dosyalar) => {
+  fs.readdir(path.join(__dirname, './app'), (err, dosyalar) => {
     if (err) {
       res.status(500).send('Klasör okunurken hata oluştu');
       return;
@@ -25,7 +25,7 @@ app.get('/uploadsFileList', (req, res) => {
   });
 });
 
-const hedefDizin = path.join(__dirname, './uploads');
+const hedefDizin = path.join(__dirname, './app');
 
 // Multer ayarları
 const yukleme = multer({ dest: hedefDizin });
@@ -58,7 +58,7 @@ app.use('/app', express.static(path.join(__dirname, 'app')));
 
 // Klasör içeriğini listeleme ve dosyaları açma endpoint'i
 
-app.get('/listele-ve-ac/:klasorYolu(*)', (req, res) => {
+app.get('/listele/:klasorYolu(*)', (req, res) => {
   const klasorYolu = path.join(__dirname, 'app', req.params.klasorYolu);
 
   fs.readdir(klasorYolu, (err, dosyalar) => {
@@ -73,7 +73,7 @@ app.get('/listele-ve-ac/:klasorYolu(*)', (req, res) => {
       const istatistik = fs.statSync(dosyaYolu);
 
       if (istatistik.isDirectory()) {
-        icerik += `<p><a href="/listele-ve-ac/${req.params.klasorYolu}/${dosya}"><strong>Klasör: ${dosya}</strong></a></p>`;
+        icerik += `<p><a href="/listele/${req.params.klasorYolu}/${dosya}"><strong>Klasör: ${dosya}</strong></a></p>`;
       } else if (istatistik.isFile() && dosyaYolu.endsWith('.html')) {
         icerik += `<p><a href="/app/${req.params.klasorYolu}/${dosya}">${dosya}</a></p>`;
       }
@@ -83,7 +83,7 @@ app.get('/listele-ve-ac/:klasorYolu(*)', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Sunucu http://localhost:${PORT} adresinde çalışıyor`);
 });
