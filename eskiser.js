@@ -1,21 +1,21 @@
-const express = require('express');
-const path = require('path');
-const fs = require('fs');
-const multer = require('multer');
+const express = require("express");
+const path = require("path");
+const fs = require("fs");
+const multer = require("multer");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
-app.use('/static', express.static(path.join(__dirname, 'public')));
+app.use("/static", express.static(path.join(__dirname, "public")));
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, './index.html'));
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "./index.html"));
 });
 
-app.get('/uploadsFileList', (req, res) => {
-  fs.readdir(path.join(__dirname, './uploads'), (err, dosyalar) => {
+app.get("/uploadsFileList", (req, res) => {
+  fs.readdir(path.join(__dirname, "./uploads"), (err, dosyalar) => {
     if (err) {
-      res.status(500).send('Klasör okunurken hata oluştu');
+      res.status(500).send("Klasör okunurken hata oluştu");
       return;
     }
     var uploadFiles = [];
@@ -27,44 +27,44 @@ app.get('/uploadsFileList', (req, res) => {
   });
 });
 
-const hedefDizin = path.join(__dirname, './uploads');
+const hedefDizin = path.join(__dirname, "./uploads");
 
 // Multer ayarları
 const yukleme = multer({ dest: hedefDizin });
 
-app.post('/dosya-yukle', yukleme.single('dosya'), (req, res) => {
+app.post("/dosya-yukle", yukleme.single("dosya"), (req, res) => {
   const yuklenenDosya = req.file;
 
   if (!yuklenenDosya) {
-    return res.status(400).send('Dosya yüklenemedi.');
+    return res.status(400).send("Dosya yüklenemedi.");
   }
 
   // Orijinal dosya adını al
   const orijinalDosyaAdi = req.file.originalname;
 
   // Yeni dosya yolu ve adını oluştur
-  const hedefDizin = 'uploads/';
+  const hedefDizin = "uploads/";
   const yeniDosyaYolu = path.join(__dirname, hedefDizin, orijinalDosyaAdi);
 
   fs.rename(yuklenenDosya.path, yeniDosyaYolu, (err) => {
     if (err) {
-      console.error('Dosya kaydedilirken hata oluştu:', err);
-      return res.status(500).send('Dosya kaydedilemedi.');
+      console.error("Dosya kaydedilirken hata oluştu:", err);
+      return res.status(500).send("Dosya kaydedilemedi.");
     }
     res.send(`Dosya başarıyla kaydedildi: ${yeniDosyaYolu}`);
   });
 });
 
-app.get('/listele:dosyaYolu(*)', (req, res) => {
-  const dosyaYolu = path.join('li/', req.params.dosyaYolu);
+app.get("/listele:dosyaYolu(*)", (req, res) => {
+  const dosyaYolu = path.join("li/", req.params.dosyaYolu);
   const dosyaIcerigi = listeleKlasorIcerigi(dosyaYolu);
 
-  let icerik = '';
+  let icerik = "";
 
   dosyaIcerigi.forEach((dosya) => {
-    if (dosya.tip === 'klasor') {
+    if (dosya.tip === "klasor") {
       icerik += `<a href="/${dosya.url}"> ${dosya.isim}</a>`;
-    } else if (dosya.tip === 'dosya') {
+    } else if (dosya.tip === "dosya") {
       icerik += `<a href="/${dosya.url}">${dosya.isim}</a>`;
     }
   });
@@ -84,14 +84,14 @@ function listeleKlasorIcerigi(dizinYolu) {
       if (istatistik.isDirectory()) {
         return {
           isim: dosya,
-          tip: 'klasor',
+          tip: "klasor",
           url: dosyaYolu,
           altDosyalar: listeleKlasorIcerigi(dosyaYolu),
         };
-      } else if (istatistik.isFile() && dosyaYolu.endsWith('.html')) {
+      } else if (istatistik.isFile() && dosyaYolu.endsWith(".html")) {
         return {
           isim: dosya,
-          tip: 'dosya',
+          tip: "dosya",
           url: dosyaYolu, // HTML dosyalarını tarayıcıda açmak için yolu ekliyoruz
         };
       }
@@ -101,14 +101,14 @@ function listeleKlasorIcerigi(dizinYolu) {
     .filter(Boolean);
 }
 
-app.get('app/:klasorAdi/:dosyaAdi', (req, res) => {
+app.get("app/:klasorAdi/:dosyaAdi", (req, res) => {
   const { klasorAdi, dosyaAdi } = req.params;
-  const dosyaYolu = path.join(klasorAdi, 'app/' + dosyaAdi);
+  const dosyaYolu = path.join(klasorAdi, "app/" + dosyaAdi);
 
   console.log(dosyaYolu);
   res.sendFile(dosyaYolu, { root: __dirname }, (err) => {
     if (err) {
-      res.status(500).send('Dosya gönderilirken hata oluştu');
+      res.status(500).send("Dosya gönderilirken hata oluştu");
     }
   });
 });
